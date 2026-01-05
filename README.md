@@ -1,5 +1,9 @@
 # Backend Boilerplate
 
+![Node](https://img.shields.io/badge/node-%3E=18-green)
+![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)
+![Prisma](https://img.shields.io/badge/prisma-postgresql-brightgreen)
+
 A production-ready Node.js backend boilerplate built with Express, TypeScript, Prisma, and JWT authentication.
 
 ## Features
@@ -27,7 +31,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/kunalBrahma/backend-bolierplate.git
+git clone https://github.com/kunalBrahma/backend-boilerplate.git
 cd backend-boilerplate
 ```
 
