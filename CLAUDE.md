@@ -1,41 +1,46 @@
 # Blueprint Boilerplate — Claude Code Instructions
 
-## Project Structure
-- Entry point: src/server.ts
-- Controllers: src/controllers/
-- Routes: src/routes/
-- Middleware: src/middleware/
-- Services: src/services/
-- Config: src/config/prisma.ts
-- Schema: prisma/schema.prisma
-
-## Package Conventions
-- ORM: Prisma (never raw SQL)
-- Password hashing: bcrypt (not bcryptjs)
+## Stack
+- Runtime: Node.js 18+
+- Framework: Express 4 + TypeScript (CommonJS)
+- ORM: Prisma 7 + PostgreSQL (Driver Adapter mode via prisma.config.ts)
+Connection config: prisma.config.ts at project root (NOT schema.prisma)
+NEVER add url to schema.prisma — Prisma 7 removed this
+- Auth: JWT access + refresh token rotation
 - Validation: Zod
-- Auth: JWT (access + refresh token rotation)
+- Password hashing: bcrypt (NEVER bcryptjs)
+- Connection: PrismaPg driver adapter with pg Pool
 
-## Blueprint MCP
-This project is optimized for Blueprint Architect MCP.
-Available tools: scaffold_project, inject_prisma_model, 
-inject_auth_system, inject_socket_service, inject_rbac_middleware,
-inject_crud_controller, inject_transaction, inject_payment_webhook...
-```
+## Project Structure
+- Entry point:  src/server.ts
+- Controllers:  src/controllers/
+- Routes:       src/routes/
+- Middleware:   src/middleware/
+- Services:     src/services/
+- Config:       src/config/prisma.ts
+- Schema:       prisma/schema.prisma
 
-Every developer who clones your boilerplate and uses Claude Code will immediately have full context. This makes Blueprint + Boilerplate feel like a **complete, polished platform**.
+## Critical Rules
+- NEVER add url = env("DATABASE_URL") to schema.prisma
+  in Prisma 7 — connection lives in prisma.config.ts only
+- ALWAYS import prisma from "../config/prisma"
+- ALWAYS use bcrypt, NEVER bcryptjs
+- ALWAYS use Zod for request validation
+- NEVER use raw SQL — always use Prisma client
+- NEVER create a new PrismaClient() anywhere 
+  except src/config/prisma.ts
+- Module system is CommonJS — use import/export syntax
+  (TypeScript compiles to CJS)
 
----
-
-## What NOT to Change
-
-Don't over-engineer the boilerplate trying to pre-include everything the MCP injects. The whole value of Blueprint is **injecting on demand**. The boilerplate should be the minimal clean foundation — Socket.io, Redis, Stripe should NOT be in it by default. They get added when needed via MCP tools. Keep it lean.
-
----
-
-## Priority Order
-```
-Today:    Fix bcrypt → bcryptjs conflict        (30 mins)
-Today:    Pin v1.0.0 tag + --depth 1 clone      (10 mins)
-Today:    Add RefreshToken models to schema      (20 mins)
-This week: Add CLAUDE.md to boilerplate         (30 mins)
-Later:    Plan v2 universal structure detection
+## Blueprint Architect MCP Tool Order
+When building a new feature, use tools in this order:
+1. inject_prisma_model       → add schema models first
+2. inject_crud_controller    → generate CRUD from schema
+3. inject_express_route      → wire up routes
+4. inject_rbac_middleware    → protect routes by role
+5. inject_auth_system        → only once per project
+6. inject_env_validation     → only once per project
+7. inject_global_error_handler → only once per project
+8. inject_socket_service     → add real-time if needed
+9. inject_redis_service      → add caching if needed
+10. inject_payment_webhook   → add payments if needed
